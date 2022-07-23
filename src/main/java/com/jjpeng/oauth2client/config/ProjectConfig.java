@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 
 /**
@@ -16,11 +17,18 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 public class ProjectConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
-    public InMemoryClientRegistrationRepository clientRegistration() {
+    public ClientRegistrationRepository clientRegistration() {
+        //一个ClientRegistration保存了一个客户端在某个oauth provider中注册的信息，我们可以给在github中注册的app创建一个ClientRegistration，
+        //也可以在facebook中注册的app创建一个ClientRegistration
+        //一个ClientRegistration就像是一个UserDetails
         ClientRegistration clientRegistration = buildClientRegistration();
+
+        //ClientRegistrationRepository和ClientRegistration的关系就类似于UserDetails和UserDetailsService的关系
+        //InMemoryClientRegistrationRepository是ClientRegistrationRepository的一种实现；InMemoryUserDetailsManager是UserDetailsService的一种实习
         return new InMemoryClientRegistrationRepository(clientRegistration);
     }
 
+    //这里的配置也可以在yml等文件中进行
     //CommonOAuth2Provider提供了几种常用的provider的默认配置，可以使我们简化配置
     private ClientRegistration buildClientRegistration() {
         return CommonOAuth2Provider.GITHUB.getBuilder("github")
